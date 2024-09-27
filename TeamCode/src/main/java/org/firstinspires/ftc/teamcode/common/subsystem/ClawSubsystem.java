@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.common.subsystem;
 
+import android.util.Pair;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.common.hardware.BetterServo;
+import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
 @SuppressWarnings("unused")
 public class ClawSubsystem extends SubsystemBase {
@@ -23,5 +26,9 @@ public class ClawSubsystem extends SubsystemBase {
 
     public void grab() {
         this.servo.setAngle(90);
+    }
+
+    public TelemetryLine[] getTelemetry() {
+        return new TelemetryLine[]{new TelemetryLine("Claw Servo Angle", Double.toString(this.servo.getAngle()))};
     }
 }
