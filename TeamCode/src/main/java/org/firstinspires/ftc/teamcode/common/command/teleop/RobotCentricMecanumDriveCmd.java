@@ -36,9 +36,4 @@ public class RobotCentricMecanumDriveCmd extends CommandBase {
                 turnSpeed.getAsDouble()
         );
     }
-
-    @Override
-    public boolean isFinished() {
-        return true;
-    }
 }
