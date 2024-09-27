@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.common.subsystem;
 
-import android.util.Pair;
-
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
