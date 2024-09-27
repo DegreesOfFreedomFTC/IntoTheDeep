@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.common.command.intothedeep.ClawOpenCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
 import org.firstinspires.ftc.teamcode.common.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 @TeleOp
@@ -61,5 +62,26 @@ public class Solo extends CommandOpMode {
 
         // Bind gamepad buttons
         gamepadEx.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(clawOpenCmd, clawGrabCmd);
+    }
+
+    @Override
+    public void runOpMode() {
+        initialize();
+
+        waitForStart();
+
+        while (!isStopRequested() && opModeIsActive()) {
+            run();
+
+            TelemetryLine[] clawTelemetry = clawSubsystem.getTelemetry();
+
+            for (TelemetryLine line :
+                    clawTelemetry) {
+                telemetry.addData(line.caption, line.value);
+            }
+            telemetry.update();
+        }
+
+        reset();
     }
 }
