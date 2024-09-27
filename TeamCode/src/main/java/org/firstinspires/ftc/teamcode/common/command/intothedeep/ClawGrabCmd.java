@@ -20,6 +20,6 @@ public class ClawGrabCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return this.clawSubsystem.getState() == ClawSubsystem.State.GRABBED;
+        return true;
     }
 }

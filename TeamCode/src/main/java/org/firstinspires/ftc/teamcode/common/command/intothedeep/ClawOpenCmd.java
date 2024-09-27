@@ -20,6 +20,6 @@ public class ClawOpenCmd extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return this.clawSubsystem.getState() == ClawSubsystem.State.OPEN;
+        return true;
     }
 }
