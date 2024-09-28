@@ -1,15 +1,22 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmLowerCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmRaiseCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.TowerControlCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
+import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
+
+import java.util.LinkedList;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 @TeleOp
@@ -22,18 +29,21 @@ public class Solo extends CommandOpMode {
     private GamepadEx gamepadEx;
 
     /**
-     * The {@link com.arcrobotics.ftclib.command.Subsystem}s that will be used in the TeleOp for the
+     * The {@link Subsystem}s that will be used in the TeleOp for the
      * command based paradigm.
      */
     private MecanumDriveSubsystem driveSubsystem;
     private TowerSubsystem towerSubsystem;
+    private ForearmSubsystem forearmSubsystem;
 
     /**
-     * The {@link com.arcrobotics.ftclib.command.Command}s that will be used in the TeleOp for the
+     * The {@link Command}s that will be used in the TeleOp for the
      * command based paradigm.
      */
     private RobotCentricMecanumDriveCmd driveCmd;
     private TowerControlCmd towerCmd;
+    private ForearmRaiseCmd forearmRaiseCmd;
+    private ForearmLowerCmd forearmLowerCmd;
 
     @Override
     public void initialize() {
@@ -43,6 +53,7 @@ public class Solo extends CommandOpMode {
         // Instantiate the Subsystems
         driveSubsystem = new MecanumDriveSubsystem(hardwareMap);
         towerSubsystem = new TowerSubsystem(hardwareMap);
+        forearmSubsystem = new ForearmSubsystem(hardwareMap);
 
         // Instantiate the Commands
         driveCmd = new RobotCentricMecanumDriveCmd(
@@ -57,13 +68,22 @@ public class Solo extends CommandOpMode {
                 () -> gamepadEx.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
                         - gamepadEx.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
+        forearmRaiseCmd = new ForearmRaiseCmd(forearmSubsystem);
+        forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);
+
         // Set default commands
         driveSubsystem.setDefaultCommand(driveCmd);
         towerSubsystem.setDefaultCommand(towerCmd);
 
         // Bind buttons
         gamepadEx.getGamepadButton(GamepadKeys.Button.START)
-                .whenPressed(() -> towerSubsystem.resetPosition());
+                .whenPressed(() -> {
+                    towerSubsystem.resetPosition();
+                    forearmSubsystem.resetPosition();
+                });
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(forearmLowerCmd);
+        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(forearmRaiseCmd);
     }
 
     @Override
@@ -75,9 +95,12 @@ public class Solo extends CommandOpMode {
         while (!isStopRequested() && opModeIsActive()) {
             run();
 
-            TelemetryLine[] towerTelemetry = towerSubsystem.getTelemetry();
+            LinkedList<TelemetryLine> telemetryLines = new LinkedList<>();
 
-            for (TelemetryLine line : towerTelemetry) {
+            telemetryLines.addAll(towerSubsystem.getTelemetry());
+            telemetryLines.addAll(forearmSubsystem.getTelemetry());
+
+            for (TelemetryLine line : telemetryLines) {
                 telemetry.addData(line.caption, line.value);
             }
             telemetry.update();

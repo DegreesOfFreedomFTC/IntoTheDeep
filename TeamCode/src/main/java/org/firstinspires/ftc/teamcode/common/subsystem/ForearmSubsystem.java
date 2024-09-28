@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
+import java.util.LinkedList;
+
 @SuppressWarnings("unused")
 public class ForearmSubsystem extends SubsystemBase {
 
@@ -26,7 +28,11 @@ public class ForearmSubsystem extends SubsystemBase {
         this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public TelemetryLine[] getTelemetry() {
-        return new TelemetryLine[]{new TelemetryLine("Forearm Pos", Double.toString(this.motor.getCurrentPosition()))};
+    public LinkedList<TelemetryLine> getTelemetry() {
+        LinkedList<TelemetryLine> lines = new LinkedList<>();
+
+        lines.add(new TelemetryLine("Forearm Pos", Double.toString(this.motor.getCurrentPosition())));
+
+        return lines;
     }
 }

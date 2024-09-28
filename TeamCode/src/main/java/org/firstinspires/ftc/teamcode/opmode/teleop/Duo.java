@@ -5,8 +5,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmLowerCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmRaiseCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.TowerControlCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
+import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
 
@@ -27,6 +30,7 @@ public class Duo extends CommandOpMode {
      */
     private MecanumDriveSubsystem driveSubsystem;
     private TowerSubsystem towerSubsystem;
+    private ForearmSubsystem forearmSubsystem;
 
     /**
      * The {@link com.arcrobotics.ftclib.command.Command}s that will be used in the TeleOp for the
@@ -34,6 +38,8 @@ public class Duo extends CommandOpMode {
      */
     private RobotCentricMecanumDriveCmd driveCmd;
     private TowerControlCmd towerCmd;
+    private ForearmRaiseCmd forearmRaiseCmd;
+    private ForearmLowerCmd forearmLowerCmd;
 
     @Override
     public void initialize() {
@@ -44,6 +50,7 @@ public class Duo extends CommandOpMode {
         // Instantiate the Subsystems
         driveSubsystem = new MecanumDriveSubsystem(hardwareMap);
         towerSubsystem = new TowerSubsystem(hardwareMap);
+        forearmSubsystem = new ForearmSubsystem(hardwareMap);
 
         // Instantiate the Commands
         driveCmd = new RobotCentricMecanumDriveCmd(
@@ -58,8 +65,15 @@ public class Duo extends CommandOpMode {
                 () -> gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
                         - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
+        forearmRaiseCmd = new ForearmRaiseCmd(forearmSubsystem);
+        forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);
+
         // Set default commands
         driveSubsystem.setDefaultCommand(driveCmd);
         towerSubsystem.setDefaultCommand(towerCmd);
+
+        // Bind buttons
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(forearmLowerCmd);
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(forearmRaiseCmd);
     }
 }

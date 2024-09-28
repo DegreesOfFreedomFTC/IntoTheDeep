@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
+import java.util.LinkedList;
+
 @SuppressWarnings("unused")
 public class TowerSubsystem extends SubsystemBase {
 
@@ -26,7 +28,11 @@ public class TowerSubsystem extends SubsystemBase {
         this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public TelemetryLine[] getTelemetry() {
-        return new TelemetryLine[]{new TelemetryLine("Tower Pos", Double.toString(this.motor.getCurrentPosition()))};
+    public LinkedList<TelemetryLine> getTelemetry() {
+        LinkedList<TelemetryLine> lines = new LinkedList<>();
+
+        lines.add(new TelemetryLine("Tower Pos", Double.toString(this.motor.getCurrentPosition())));
+
+        return lines;
     }
 }
