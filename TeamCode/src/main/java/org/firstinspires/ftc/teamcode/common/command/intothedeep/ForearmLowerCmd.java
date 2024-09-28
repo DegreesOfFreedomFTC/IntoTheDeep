@@ -18,4 +18,9 @@ public class ForearmLowerCmd extends CommandBase {
     public void execute() {
         this.forearmSubsystem.power(-0.75);
     }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }
