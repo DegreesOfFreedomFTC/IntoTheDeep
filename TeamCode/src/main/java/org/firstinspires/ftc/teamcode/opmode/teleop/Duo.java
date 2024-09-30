@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmLowerCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmRaiseCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmStopCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.TowerControlCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
 import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
@@ -40,6 +41,7 @@ public class Duo extends CommandOpMode {
     private TowerControlCmd towerCmd;
     private ForearmRaiseCmd forearmRaiseCmd;
     private ForearmLowerCmd forearmLowerCmd;
+    private ForearmStopCmd forearmStopCmd;
 
     @Override
     public void initialize() {
@@ -67,13 +69,18 @@ public class Duo extends CommandOpMode {
 
         forearmRaiseCmd = new ForearmRaiseCmd(forearmSubsystem);
         forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);
+        forearmStopCmd = new ForearmStopCmd(forearmSubsystem);
 
         // Set default commands
         driveSubsystem.setDefaultCommand(driveCmd);
         towerSubsystem.setDefaultCommand(towerCmd);
 
         // Bind buttons
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(forearmLowerCmd);
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(forearmRaiseCmd);
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(forearmLowerCmd)
+                .whenReleased(forearmStopCmd);
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(forearmRaiseCmd)
+                .whenReleased(forearmStopCmd);
     }
 }
