@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -49,6 +51,9 @@ public class Solo extends CommandOpMode {
 
     @Override
     public void initialize() {
+        // Make telemetry go to dashboard
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         // Instantiate the GamepadEx
         gamepadEx = new GamepadEx(gamepad1);
 
