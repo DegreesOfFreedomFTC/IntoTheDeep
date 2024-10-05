@@ -13,13 +13,17 @@ import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmLowerCmd
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmRaiseCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmStopCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.TowerControlCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ClawGrabCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ClawOpenCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
 import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
 import java.util.LinkedList;
+import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 @TeleOp
@@ -38,6 +42,7 @@ public class Solo extends CommandOpMode {
     private MecanumDriveSubsystem driveSubsystem;
     private TowerSubsystem towerSubsystem;
     private ForearmSubsystem forearmSubsystem;
+    private ClawSubsystem clawSubsystem;
 
     /**
      * The {@link Command}s that will be used in the TeleOp for the
@@ -48,6 +53,8 @@ public class Solo extends CommandOpMode {
     private ForearmRaiseCmd forearmRaiseCmd;
     private ForearmLowerCmd forearmLowerCmd;
     private ForearmStopCmd forearmStopCmd;
+    private ClawOpenCmd clawOpenCmd;
+    private ClawGrabCmd clawGrabCmd;
 
     @Override
     public void initialize() {
@@ -61,6 +68,7 @@ public class Solo extends CommandOpMode {
         driveSubsystem = new MecanumDriveSubsystem(hardwareMap);
         towerSubsystem = new TowerSubsystem(hardwareMap);
         forearmSubsystem = new ForearmSubsystem(hardwareMap);
+        clawSubsystem = new ClawSubsystem(hardwareMap);
 
         // Instantiate the Commands
         driveCmd = new RobotCentricMecanumDriveCmd(
@@ -78,6 +86,9 @@ public class Solo extends CommandOpMode {
         forearmRaiseCmd = new ForearmRaiseCmd(forearmSubsystem);
         forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);
         forearmStopCmd = new ForearmStopCmd(forearmSubsystem);
+
+        clawOpenCmd = new ClawOpenCmd(clawSubsystem);
+        clawGrabCmd = new ClawGrabCmd(clawSubsystem);
 
         // Set default commands
         driveSubsystem.setDefaultCommand(driveCmd);
@@ -111,6 +122,7 @@ public class Solo extends CommandOpMode {
 
             telemetryLines.addAll(towerSubsystem.getTelemetry());
             telemetryLines.addAll(forearmSubsystem.getTelemetry());
+            telemetryLines.addAll(clawSubsystem.getTelemetry());
 
             for (TelemetryLine line : telemetryLines) {
                 telemetry.addData(line.caption, line.value);
@@ -119,5 +131,8 @@ public class Solo extends CommandOpMode {
         }
 
         reset();
+
+        // Bind gamepad buttons
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(clawOpenCmd, clawGrabCmd);
     }
 }

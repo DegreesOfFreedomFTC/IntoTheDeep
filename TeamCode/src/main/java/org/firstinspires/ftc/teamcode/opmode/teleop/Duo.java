@@ -9,8 +9,11 @@ import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmLowerCmd
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmRaiseCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmStopCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.TowerControlCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ClawGrabCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ClawOpenCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
 import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
 
@@ -32,6 +35,7 @@ public class Duo extends CommandOpMode {
     private MecanumDriveSubsystem driveSubsystem;
     private TowerSubsystem towerSubsystem;
     private ForearmSubsystem forearmSubsystem;
+    private ClawSubsystem clawSubsystem;
 
     /**
      * The {@link com.arcrobotics.ftclib.command.Command}s that will be used in the TeleOp for the
@@ -42,6 +46,8 @@ public class Duo extends CommandOpMode {
     private ForearmRaiseCmd forearmRaiseCmd;
     private ForearmLowerCmd forearmLowerCmd;
     private ForearmStopCmd forearmStopCmd;
+    private ClawOpenCmd clawOpenCmd;
+    private ClawGrabCmd clawGrabCmd;
 
     @Override
     public void initialize() {
@@ -53,6 +59,7 @@ public class Duo extends CommandOpMode {
         driveSubsystem = new MecanumDriveSubsystem(hardwareMap);
         towerSubsystem = new TowerSubsystem(hardwareMap);
         forearmSubsystem = new ForearmSubsystem(hardwareMap);
+        clawSubsystem = new ClawSubsystem(hardwareMap);
 
         // Instantiate the Commands
         driveCmd = new RobotCentricMecanumDriveCmd(
@@ -71,6 +78,9 @@ public class Duo extends CommandOpMode {
         forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);
         forearmStopCmd = new ForearmStopCmd(forearmSubsystem);
 
+        clawOpenCmd = new ClawOpenCmd(clawSubsystem);
+        clawGrabCmd = new ClawGrabCmd(clawSubsystem);
+
         // Set default commands
         driveSubsystem.setDefaultCommand(driveCmd);
         towerSubsystem.setDefaultCommand(towerCmd);
@@ -82,5 +92,8 @@ public class Duo extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(forearmRaiseCmd)
                 .whenReleased(forearmStopCmd);
+
+        // Bind gamepad buttons
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(clawOpenCmd, clawGrabCmd);
     }
 }
