@@ -28,6 +28,11 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         this.frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         this.backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        this.frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void drive(double driveSpeed, double strafeSpeed, double turnSpeed) {
