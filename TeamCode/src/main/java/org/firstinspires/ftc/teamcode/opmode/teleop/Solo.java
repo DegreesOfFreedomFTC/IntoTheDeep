@@ -106,6 +106,8 @@ public class Solo extends CommandOpMode {
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(forearmRaiseCmd)
                 .whenReleased(forearmStopCmd);
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(clawOpenCmd, clawGrabCmd);
     }
 
     @Override
@@ -130,8 +132,5 @@ public class Solo extends CommandOpMode {
         }
 
         reset();
-
-        // Bind gamepad buttons
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(clawOpenCmd, clawGrabCmd);
     }
 }
