@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.common.subsystem;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @SuppressWarnings("unused")
@@ -22,6 +23,11 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         this.frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        this.frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        this.frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        this.backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void drive(double driveSpeed, double strafeSpeed, double turnSpeed) {
