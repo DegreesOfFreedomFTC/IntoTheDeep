@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
 import java.util.LinkedList;
-import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 @TeleOp
