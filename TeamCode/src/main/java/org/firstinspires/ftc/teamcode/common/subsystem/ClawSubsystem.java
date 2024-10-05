@@ -11,22 +11,19 @@ public class ClawSubsystem extends SubsystemBase {
 
     private final BetterServo servo;
 
-    private final double OPEN_ANGLE = 0;
-    private final double GRABBED_ANGLE = 90;
-
     public ClawSubsystem(final HardwareMap hardwareMap) {
         this.servo = new BetterServo(hardwareMap, "clServo");
     }
 
     public void open() {
-        this.servo.setAngle(0);
+        this.servo.setPosition(0.0);
     }
 
     public void grab() {
-        this.servo.setAngle(90);
+        this.servo.setPosition(1.0);
     }
 
     public TelemetryLine[] getTelemetry() {
-        return new TelemetryLine[]{new TelemetryLine("Claw Servo Angle", Double.toString(this.servo.getAngle()))};
+        return new TelemetryLine[]{new TelemetryLine("Claw Servo Position", Double.toString(this.servo.getPosition()))};
     }
 }
