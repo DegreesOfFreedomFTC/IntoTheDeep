@@ -16,7 +16,7 @@ public class ForearmLowerCmd extends CommandBase {
 
     @Override
     public void execute() {
-        this.forearmSubsystem.power(-0.75);
+        this.forearmSubsystem.power(-0.5);
     }
 
     @Override
