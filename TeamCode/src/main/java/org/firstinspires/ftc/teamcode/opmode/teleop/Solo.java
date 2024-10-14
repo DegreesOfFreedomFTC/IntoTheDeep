@@ -72,8 +72,8 @@ public class Solo extends CommandOpMode {
 
         towerCmd = new TowerControlCmd(
                 towerSubsystem,
-                () -> gamepadEx.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
-                        - gamepadEx.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+                () -> (gamepadEx.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
+                        - gamepadEx.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)) / 2.0);
 
         forearmRaiseCmd = new ForearmRaiseCmd(forearmSubsystem);
         forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);

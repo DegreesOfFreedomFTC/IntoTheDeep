@@ -64,8 +64,8 @@ public class Duo extends CommandOpMode {
 
         towerCmd = new TowerControlCmd(
                 towerSubsystem,
-                () -> gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
-                        - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+                () -> (gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
+                        - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)) / 2.0);
 
         forearmRaiseCmd = new ForearmRaiseCmd(forearmSubsystem);
         forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);
