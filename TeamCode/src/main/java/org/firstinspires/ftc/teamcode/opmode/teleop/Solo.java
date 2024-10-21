@@ -9,8 +9,10 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmLowerCmd;
-import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmRaiseCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmHangingLowerCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmHangingRaiseCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmNormalLowerCmd;
+import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmNormalRaiseCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmStopCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.TowerControlCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
@@ -44,10 +46,16 @@ public class Solo extends CommandOpMode {
      * command based paradigm.
      */
     private RobotCentricMecanumDriveCmd driveCmd;
+
     private TowerControlCmd towerNormalCmd;
     private TowerControlCmd towerHangingCmd;
-    private ForearmRaiseCmd forearmRaiseCmd;
-    private ForearmLowerCmd forearmLowerCmd;
+
+    private ForearmNormalRaiseCmd forearmNormalRaiseCmd;
+    private ForearmNormalLowerCmd forearmNormalLowerCmd;
+
+    private ForearmHangingRaiseCmd forearmHangingRaiseCmd;
+    private ForearmHangingLowerCmd forearmHangingLowerCmd;
+
     private ForearmStopCmd forearmStopCmd;
 
     @Override
@@ -81,8 +89,10 @@ public class Solo extends CommandOpMode {
                 () -> gamepadEx.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
                         - gamepadEx.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
-        forearmRaiseCmd = new ForearmRaiseCmd(forearmSubsystem);
-        forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);
+        forearmNormalRaiseCmd = new ForearmNormalRaiseCmd(forearmSubsystem);
+        forearmNormalLowerCmd = new ForearmNormalLowerCmd(forearmSubsystem);
+        forearmHangingRaiseCmd = new ForearmHangingRaiseCmd(forearmSubsystem);
+        forearmHangingLowerCmd = new ForearmHangingLowerCmd(forearmSubsystem);
         forearmStopCmd = new ForearmStopCmd(forearmSubsystem);
 
         // Set default commands
@@ -97,15 +107,15 @@ public class Solo extends CommandOpMode {
                 });
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(forearmLowerCmd)
+                .whenPressed(forearmNormalLowerCmd)
                 .whenReleased(forearmStopCmd);
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(forearmRaiseCmd)
+                .whenPressed(forearmNormalRaiseCmd)
                 .whenReleased(forearmStopCmd);
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.X).toggleWhenPressed(
-                () -> towerSubsystem.setDefaultCommand(towerHangingCmd),
-                () -> towerSubsystem.setDefaultCommand(towerNormalCmd)
+                this::enableHanging,
+                this::disableHanging
         );
     }
 
@@ -130,5 +140,29 @@ public class Solo extends CommandOpMode {
         }
 
         reset();
+    }
+
+    private void enableHanging() {
+        towerSubsystem.setDefaultCommand(towerHangingCmd);
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(forearmHangingLowerCmd)
+                .whenReleased(forearmStopCmd);
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(forearmHangingRaiseCmd)
+                .whenReleased(forearmStopCmd);
+    }
+
+    private void disableHanging() {
+        towerSubsystem.setDefaultCommand(towerNormalCmd);
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(forearmNormalLowerCmd)
+                .whenReleased(forearmStopCmd);
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(forearmNormalRaiseCmd)
+                .whenReleased(forearmStopCmd);
     }
 }

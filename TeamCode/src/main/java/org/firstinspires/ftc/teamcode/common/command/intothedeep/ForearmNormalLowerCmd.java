@@ -5,11 +5,11 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
 
 @SuppressWarnings("unused")
-public class ForearmLowerCmd extends CommandBase {
+public class ForearmNormalLowerCmd extends CommandBase {
 
     private final ForearmSubsystem forearmSubsystem;
 
-    public ForearmLowerCmd(ForearmSubsystem forearmSubsystem) {
+    public ForearmNormalLowerCmd(ForearmSubsystem forearmSubsystem) {
         this.forearmSubsystem = forearmSubsystem;
         addRequirements(forearmSubsystem);
     }
