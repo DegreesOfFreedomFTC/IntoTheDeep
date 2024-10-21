@@ -38,7 +38,8 @@ public class Duo extends CommandOpMode {
      * command based paradigm.
      */
     private RobotCentricMecanumDriveCmd driveCmd;
-    private TowerControlCmd towerCmd;
+    private TowerControlCmd towerNormalCmd;
+    private TowerControlCmd towerHangingCmd;
     private ForearmRaiseCmd forearmRaiseCmd;
     private ForearmLowerCmd forearmLowerCmd;
     private ForearmStopCmd forearmStopCmd;
@@ -62,10 +63,15 @@ public class Duo extends CommandOpMode {
                 gamepadEx1::getRightX
         );
 
-        towerCmd = new TowerControlCmd(
+        towerNormalCmd = new TowerControlCmd(
                 towerSubsystem,
                 () -> (gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
                         - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)) / 2.0);
+
+        towerHangingCmd = new TowerControlCmd(
+                towerSubsystem,
+                () -> gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)
+                        - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
         forearmRaiseCmd = new ForearmRaiseCmd(forearmSubsystem);
         forearmLowerCmd = new ForearmLowerCmd(forearmSubsystem);
@@ -73,7 +79,7 @@ public class Duo extends CommandOpMode {
 
         // Set default commands
         driveSubsystem.setDefaultCommand(driveCmd);
-        towerSubsystem.setDefaultCommand(towerCmd);
+        towerSubsystem.setDefaultCommand(towerNormalCmd);
 
         // Bind buttons
         gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -82,5 +88,10 @@ public class Duo extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(forearmRaiseCmd)
                 .whenReleased(forearmStopCmd);
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.X).toggleWhenPressed(
+                () -> towerSubsystem.setDefaultCommand(towerHangingCmd),
+                () -> towerSubsystem.setDefaultCommand(towerNormalCmd)
+        );
     }
 }
