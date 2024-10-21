@@ -114,6 +114,8 @@ public class Duo extends CommandOpMode {
                 this::enableHanging,
                 this::disableHanging
         );
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(clawOpenCmd, clawGrabCmd);
     }
 
     private void enableHanging() {
@@ -138,8 +140,5 @@ public class Duo extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(forearmNormalRaiseCmd)
                 .whenReleased(forearmStopCmd);
-
-        // Bind gamepad buttons
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(clawOpenCmd, clawGrabCmd);
     }
 }
