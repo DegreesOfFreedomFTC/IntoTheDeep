@@ -42,10 +42,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
                 1.0
         );
 
-        double frontLeftSpeed  = (driveSpeed + strafeSpeed + turnSpeed) / denominator;
-        double frontRightSpeed = (driveSpeed - strafeSpeed - turnSpeed) / denominator;
-        double backLeftSpeed   = (driveSpeed - strafeSpeed + turnSpeed) / denominator;
-        double backRightSpeed  = (driveSpeed + strafeSpeed - turnSpeed) / denominator;
+        double frontLeftSpeed  = ((driveSpeed + strafeSpeed + turnSpeed) / denominator) / 1.5;
+        double frontRightSpeed = ((driveSpeed - strafeSpeed - turnSpeed) / denominator) / 1.5;
+        double backLeftSpeed   = ((driveSpeed - strafeSpeed + turnSpeed) / denominator) / 1.5;
+        double backRightSpeed  = ((driveSpeed + strafeSpeed - turnSpeed) / denominator) / 1.5;
 
         frontLeftMotor.setPower(frontLeftSpeed);
         frontRightMotor.setPower(frontRightSpeed);
