@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
 
+import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
@@ -97,7 +98,9 @@ public class Solo extends CommandOpMode {
 
         // Set default commands
         driveSubsystem.setDefaultCommand(driveCmd);
-        towerSubsystem.setDefaultCommand(towerNormalCmd);
+
+        // Schedule default commands
+        towerNormalCmd.schedule(true);
 
         // Bind buttons
         gamepadEx.getGamepadButton(GamepadKeys.Button.START)
@@ -126,7 +129,11 @@ public class Solo extends CommandOpMode {
         waitForStart();
 
         while (!isStopRequested() && opModeIsActive()) {
-            run();
+            try {
+                run();
+            } catch (ConcurrentModificationException e) {
+                telemetry.addLine("Concurrent Modification at CommandScheduler.getInstance.run()");
+            }
 
             LinkedList<TelemetryLine> telemetryLines = new LinkedList<>();
 
@@ -143,26 +150,58 @@ public class Solo extends CommandOpMode {
     }
 
     private void enableHanging() {
-        towerSubsystem.setDefaultCommand(towerHangingCmd);
+        try {
+            towerNormalCmd.cancel();
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at towerNormalCmd.cancel()");
+        }
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(forearmHangingLowerCmd)
-                .whenReleased(forearmStopCmd);
+        try {
+            towerHangingCmd.schedule(true);
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at towerHangingCmd.schedule(true)");
+        }
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(forearmHangingRaiseCmd)
-                .whenReleased(forearmStopCmd);
+        try {
+            gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                    .whenPressed(forearmHangingLowerCmd, true)
+                    .whenReleased(forearmStopCmd, true);
+
+            gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                    .whenPressed(forearmHangingRaiseCmd, true)
+                    .whenReleased(forearmStopCmd, true);
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at forearm button reassignment");
+        }
+
+        telemetry.update();
     }
 
     private void disableHanging() {
-        towerSubsystem.setDefaultCommand(towerNormalCmd);
+        try {
+            towerHangingCmd.cancel();
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at towerHangingCmd.cancel()");
+        }
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(forearmNormalLowerCmd)
-                .whenReleased(forearmStopCmd);
+        try {
+            towerNormalCmd.schedule(true);
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at towerNormalCmd.schedule(true)");
+        }
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(forearmNormalRaiseCmd)
-                .whenReleased(forearmStopCmd);
+        try {
+            gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                    .whenPressed(forearmNormalLowerCmd)
+                    .whenReleased(forearmStopCmd);
+
+            gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                    .whenPressed(forearmNormalRaiseCmd)
+                    .whenReleased(forearmStopCmd);
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at forearm button reassignment");
+        }
+
+        telemetry.update();
     }
 }

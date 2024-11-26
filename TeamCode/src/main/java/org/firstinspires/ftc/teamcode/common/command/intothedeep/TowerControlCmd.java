@@ -26,4 +26,9 @@ public class TowerControlCmd extends CommandBase {
     public void execute() {
         towerSubsystem.power(power.getAsDouble());
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        this.towerSubsystem.power(0.0);
+    }
 }
