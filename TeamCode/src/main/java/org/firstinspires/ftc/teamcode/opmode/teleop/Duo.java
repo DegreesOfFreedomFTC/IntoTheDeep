@@ -18,6 +18,10 @@ import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
+import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
+
+import java.util.ConcurrentModificationException;
+import java.util.LinkedList;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 @TeleOp
@@ -118,27 +122,87 @@ public class Duo extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(clawOpenCmd, clawGrabCmd);
     }
 
+    @Override
+    public void runOpMode() {
+        initialize();
+
+        waitForStart();
+
+        while (!isStopRequested() && opModeIsActive()) {
+            try {
+                run();
+            } catch (ConcurrentModificationException e) {
+                telemetry.addLine("Concurrent Modification at CommandScheduler.getInstance.run()");
+            }
+
+            LinkedList<TelemetryLine> telemetryLines = new LinkedList<>();
+
+            telemetryLines.addAll(towerSubsystem.getTelemetry());
+            telemetryLines.addAll(forearmSubsystem.getTelemetry());
+            telemetryLines.addAll(clawSubsystem.getTelemetry());
+
+            for (TelemetryLine line : telemetryLines) {
+                telemetry.addData(line.caption, line.value);
+            }
+            telemetry.update();
+        }
+
+        reset();
+    }
+
     private void enableHanging() {
-        towerSubsystem.setDefaultCommand(towerHangingCmd);
+        try {
+            towerNormalCmd.cancel();
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at towerNormalCmd.cancel()");
+        }
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(forearmHangingLowerCmd)
-                .whenReleased(forearmStopCmd);
+        try {
+            towerHangingCmd.schedule(true);
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at towerHangingCmd.schedule(true)");
+        }
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(forearmHangingRaiseCmd)
-                .whenReleased(forearmStopCmd);
+        try {
+            gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                    .whenPressed(forearmHangingLowerCmd, true)
+                    .whenReleased(forearmStopCmd, true);
+
+            gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                    .whenPressed(forearmHangingRaiseCmd, true)
+                    .whenReleased(forearmStopCmd, true);
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at forearm button reassignment");
+        }
+
+        telemetry.update();
     }
 
     private void disableHanging() {
-        towerSubsystem.setDefaultCommand(towerNormalCmd);
+        try {
+            towerHangingCmd.cancel();
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at towerHangingCmd.cancel()");
+        }
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(forearmNormalLowerCmd)
-                .whenReleased(forearmStopCmd);
+        try {
+            towerNormalCmd.schedule(true);
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at towerNormalCmd.schedule(true)");
+        }
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(forearmNormalRaiseCmd)
-                .whenReleased(forearmStopCmd);
+        try {
+            gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                    .whenPressed(forearmNormalLowerCmd)
+                    .whenReleased(forearmStopCmd);
+
+            gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                    .whenPressed(forearmNormalRaiseCmd)
+                    .whenReleased(forearmStopCmd);
+        } catch (ConcurrentModificationException e) {
+            telemetry.addLine("Concurrent Modification at forearm button reassignment");
+        }
+
+        telemetry.update();
     }
 }
