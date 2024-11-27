@@ -126,7 +126,6 @@ public class Duo extends CommandOpMode {
 
             telemetryLines.addAll(towerSubsystem.getTelemetry());
             telemetryLines.addAll(forearmSubsystem.getTelemetry());
-            telemetryLines.addAll(clawSubsystem.getTelemetry());
 
             for (TelemetryLine line : telemetryLines) {
                 telemetry.addData(line.caption, line.value);
