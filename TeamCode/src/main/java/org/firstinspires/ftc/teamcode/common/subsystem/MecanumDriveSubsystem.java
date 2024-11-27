@@ -19,10 +19,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         this.backLeftMotor = hardwareMap.get(DcMotor.class, "dtBackLeftMotor");
         this.backRightMotor = hardwareMap.get(DcMotor.class, "dtBackRightMotor");
 
-        this.frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         this.frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -36,6 +36,8 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double driveSpeed, double strafeSpeed, double turnSpeed) {
+        strafeSpeed = strafeSpeed * 1.1;
+
         // Ensure that speeds have the same ratio
         double denominator = Math.max(
                 Math.abs(driveSpeed) + Math.abs(strafeSpeed) + Math.abs(turnSpeed),
