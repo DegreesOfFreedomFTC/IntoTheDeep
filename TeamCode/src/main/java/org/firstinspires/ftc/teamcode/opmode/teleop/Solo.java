@@ -15,8 +15,10 @@ import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmNormalLo
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmNormalRaiseCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmStopCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.TowerControlCmd;
+import org.firstinspires.ftc.teamcode.common.command.teleop.FieldCentricMecanumDriveCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
 import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystem.IMUSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
@@ -35,18 +37,20 @@ public class Solo extends CommandOpMode {
     private GamepadEx gamepadEx;
 
     /**
-     * The {@link Subsystem}s that will be used in the TeleOp for the
+     * The {@link com.arcrobotics.ftclib.command.Subsystem}s that will be used in the TeleOp for the
      * command based paradigm.
      */
     private MecanumDriveSubsystem driveSubsystem;
+    private IMUSubsystem imuSubsystem;
     private TowerSubsystem towerSubsystem;
     private ForearmSubsystem forearmSubsystem;
 
     /**
-     * The {@link Command}s that will be used in the TeleOp for the
+     * The {@link com.arcrobotics.ftclib.command.Command}s that will be used in the TeleOp for the
      * command based paradigm.
      */
-    private RobotCentricMecanumDriveCmd driveCmd;
+    private RobotCentricMecanumDriveCmd robotCentricDriveCmd;
+    private FieldCentricMecanumDriveCmd fieldCentricDriveCmd;
 
     private TowerControlCmd towerNormalCmd;
     private TowerControlCmd towerHangingCmd;
@@ -69,15 +73,24 @@ public class Solo extends CommandOpMode {
 
         // Instantiate the Subsystems
         driveSubsystem = new MecanumDriveSubsystem(hardwareMap);
+        imuSubsystem = new IMUSubsystem(hardwareMap);
         towerSubsystem = new TowerSubsystem(hardwareMap);
         forearmSubsystem = new ForearmSubsystem(hardwareMap);
 
         // Instantiate the Commands
-        driveCmd = new RobotCentricMecanumDriveCmd(
+        robotCentricDriveCmd = new RobotCentricMecanumDriveCmd(
                 driveSubsystem,
                 gamepadEx::getLeftY,
                 gamepadEx::getLeftX,
                 gamepadEx::getRightX
+        );
+
+        fieldCentricDriveCmd = new FieldCentricMecanumDriveCmd(
+                driveSubsystem,
+                imuSubsystem,
+                (() -> gamepadEx.getLeftY() / 2.0),
+                (() -> gamepadEx.getLeftX() / 2.0),
+                (() -> gamepadEx.getRightX() / 2.0)
         );
 
         towerNormalCmd = new TowerControlCmd(
@@ -97,7 +110,7 @@ public class Solo extends CommandOpMode {
         forearmStopCmd = new ForearmStopCmd(forearmSubsystem);
 
         // Set default commands
-        driveSubsystem.setDefaultCommand(driveCmd);
+        driveSubsystem.setDefaultCommand(fieldCentricDriveCmd);
 
         // Schedule default commands
         towerNormalCmd.schedule(true);
