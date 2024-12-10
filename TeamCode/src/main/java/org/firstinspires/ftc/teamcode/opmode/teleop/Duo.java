@@ -13,9 +13,11 @@ import org.firstinspires.ftc.teamcode.common.command.intothedeep.ForearmStopCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.TowerControlCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ClawGrabCmd;
 import org.firstinspires.ftc.teamcode.common.command.intothedeep.ClawOpenCmd;
+import org.firstinspires.ftc.teamcode.common.command.teleop.FieldCentricMecanumDriveCmd;
 import org.firstinspires.ftc.teamcode.common.command.teleop.RobotCentricMecanumDriveCmd;
 import org.firstinspires.ftc.teamcode.common.subsystem.ForearmSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystem.IMUSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.TowerSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.TelemetryLine;
@@ -39,6 +41,7 @@ public class Duo extends CommandOpMode {
      * command based paradigm.
      */
     private MecanumDriveSubsystem driveSubsystem;
+    private IMUSubsystem imuSubsystem;
     private TowerSubsystem towerSubsystem;
     private ForearmSubsystem forearmSubsystem;
     private ClawSubsystem clawSubsystem;
@@ -47,7 +50,8 @@ public class Duo extends CommandOpMode {
      * The {@link com.arcrobotics.ftclib.command.Command}s that will be used in the TeleOp for the
      * command based paradigm.
      */
-    private RobotCentricMecanumDriveCmd driveCmd;
+    private RobotCentricMecanumDriveCmd robotCentricDriveCmd;
+    private FieldCentricMecanumDriveCmd fieldCentricDriveCmd;
 
     private TowerControlCmd towerNormalCmd;
     private TowerControlCmd towerHangingCmd;
@@ -71,16 +75,25 @@ public class Duo extends CommandOpMode {
 
         // Instantiate the Subsystems
         driveSubsystem = new MecanumDriveSubsystem(hardwareMap);
+        imuSubsystem = new IMUSubsystem(hardwareMap);
         towerSubsystem = new TowerSubsystem(hardwareMap);
         forearmSubsystem = new ForearmSubsystem(hardwareMap);
         clawSubsystem = new ClawSubsystem(hardwareMap);
 
         // Instantiate the Commands
-        driveCmd = new RobotCentricMecanumDriveCmd(
+        robotCentricDriveCmd = new RobotCentricMecanumDriveCmd(
                 driveSubsystem,
                 gamepadEx1::getLeftY,
                 gamepadEx1::getLeftX,
                 gamepadEx1::getRightX
+        );
+
+        fieldCentricDriveCmd = new FieldCentricMecanumDriveCmd(
+                driveSubsystem,
+                imuSubsystem,
+                (() -> gamepadEx1.getLeftX() / 2.0),
+                (() -> gamepadEx1.getLeftY() / 2.0),
+                (() -> gamepadEx1.getRightX() / 2.0)
         );
 
         towerNormalCmd = new TowerControlCmd(
@@ -103,7 +116,7 @@ public class Duo extends CommandOpMode {
         clawGrabCmd = new ClawGrabCmd(clawSubsystem);
 
         // Set default commands
-        driveSubsystem.setDefaultCommand(driveCmd);
+        driveSubsystem.setDefaultCommand(fieldCentricDriveCmd);
         towerSubsystem.setDefaultCommand(towerNormalCmd);
 
         // Bind buttons
