@@ -23,6 +23,6 @@ public class IMUSubsystem extends SubsystemBase {
     }
 
     public double getYaw() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 }
