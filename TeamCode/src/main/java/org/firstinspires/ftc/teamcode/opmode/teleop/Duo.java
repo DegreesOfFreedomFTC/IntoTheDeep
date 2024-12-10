@@ -117,7 +117,9 @@ public class Duo extends CommandOpMode {
 
         // Set default commands
         driveSubsystem.setDefaultCommand(fieldCentricDriveCmd);
-        towerSubsystem.setDefaultCommand(towerNormalCmd);
+
+        // Schedule default commands
+        towerNormalCmd.schedule(true);
 
         // Bind buttons
         gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
